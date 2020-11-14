@@ -45,17 +45,26 @@ steps:
 
 - task: PublishBuildArtifacts@1
 
+- task: S3Upload@1
+  inputs:
+    awsCredentials: 'Connection aws'
+    regionName: 'us-east-1'
+    bucketName: 'petbook-amazon'
+    sourceFolder: '$(Build.ArtifactStagingDirectory)'
+    globExpressions: '*.zip'
+    targetFolder: 'petbook-s3'
+
 - task: Docker@2
   inputs:
     containerRegistry: 'Connection docker hub'
     repository: 'camilo9856/pet-book'
     command: 'build'
     Dockerfile: '**/Dockerfile'
-    tags: 'petbook$(Build.BuildId)'
+    tags: 'petbook_V$(Build.BuildId)'
 
 - task: Docker@2
   inputs:
     containerRegistry: 'Connection docker hub'
     repository: 'camilo9856/pet-book'
     command: 'push'
-    tags: 'petbook$(Build.BuildId)'
+    tags: 'petbook_V$(Build.BuildId)'
